@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="EmployeeModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="empDetails">
+          <Key>
+            <PropertyRef Name="empCode" />
+          </Key>
+          <Property Name="empCode" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="empName" Type="nvarchar" MaxLength="100" />
+          <Property Name="supervisorName" Type="nvarchar" MaxLength="100" />
+          <Property Name="leavePackage" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Employee.dbo.leaveAllocate' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="leaveAllocate">
+          <Key>
+            <PropertyRef Name="leaveType" />
+            <PropertyRef Name="entitledLeaveAmount" />
+          </Key>
+          <Property Name="employeeName" Type="nvarchar" MaxLength="100" />
+          <Property Name="currentYear" Type="datetime" />
+          <Property Name="leaveType" Type="int" Nullable="false" />
+          <Property Name="entitledLeaveAmount" Type="int" Nullable="false" />
+          <Property Name="utilizedLeaveAmount" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Employee.dbo.leaveEntry' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="leaveEntry">
+          <Key>
+            <PropertyRef Name="empCode" />
+            <PropertyRef Name="leaveType" />
+          </Key>
+          <Property Name="empCode" Type="int" Nullable="false" />
+          <Property Name="leaveType" Type="int" Nullable="false" />
+          <Property Name="requestedDate" Type="datetime" />
+          <Property Name="approvedDate" Type="datetime" />
+          <Property Name="supervisorName" Type="nvarchar" MaxLength="100" />
+          <Property Name="currentStatus" Type="nvarchar" MaxLength="100" />
+          <Property Name="empComments" Type="nvarchar" MaxLength="100" />
+          <Property Name="supervisorComments" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Employee.dbo.leaveType' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="leaveType">
+          <Key>
+            <PropertyRef Name="typeCode" />
+          </Key>
+          <Property Name="typeCode" Type="int" Nullable="false" />
+          <Property Name="leaveDescription" Type="nvarchar" MaxLength="300" />
+        </EntityType>
+        <Association Name="FK_leaveEntry_empDetails">
+          <End Role="empDetails" Type="Self.empDetails" Multiplicity="1" />
+          <End Role="leaveEntry" Type="Self.leaveEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="empDetails">
+              <PropertyRef Name="empCode" />
+            </Principal>
+            <Dependent Role="leaveEntry">
+              <PropertyRef Name="empCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="EmployeeModelStoreContainer">
+          <EntitySet Name="empDetails" EntityType="Self.empDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="leaveAllocate" EntityType="Self.leaveAllocate" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [leaveAllocate].[employeeName] AS [employeeName], 
+    [leaveAllocate].[currentYear] AS [currentYear], 
+    [leaveAllocate].[leaveType] AS [leaveType], 
+    [leaveAllocate].[entitledLeaveAmount] AS [entitledLeaveAmount], 
+    [leaveAllocate].[utilizedLeaveAmount] AS [utilizedLeaveAmount]
+    FROM [dbo].[leaveAllocate] AS [leaveAllocate]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="leaveEntry" EntityType="Self.leaveEntry" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [leaveEntry].[empCode] AS [empCode], 
+    [leaveEntry].[leaveType] AS [leaveType], 
+    [leaveEntry].[requestedDate] AS [requestedDate], 
+    [leaveEntry].[approvedDate] AS [approvedDate], 
+    [leaveEntry].[supervisorName] AS [supervisorName], 
+    [leaveEntry].[currentStatus] AS [currentStatus], 
+    [leaveEntry].[empComments] AS [empComments], 
+    [leaveEntry].[supervisorComments] AS [supervisorComments]
+    FROM [dbo].[leaveEntry] AS [leaveEntry]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="leaveType" EntityType="Self.leaveType" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [leaveType].[typeCode] AS [typeCode], 
+    [leaveType].[leaveDescription] AS [leaveDescription]
+    FROM [dbo].[leaveType] AS [leaveType]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_leaveEntry_empDetails" Association="Self.FK_leaveEntry_empDetails">
+            <End Role="empDetails" EntitySet="empDetails" />
+            <End Role="leaveEntry" EntitySet="leaveEntry" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="EmployeeModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="empDetail">
+          <Key>
+            <PropertyRef Name="empCode" />
+          </Key>
+          <Property Name="empCode" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="empName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="supervisorName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="leavePackage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="leaveEntries" Relationship="Self.FK_leaveEntry_empDetails" FromRole="empDetails" ToRole="leaveEntry" />
+        </EntityType>
+        <EntityType Name="leaveAllocate">
+          <Key>
+            <PropertyRef Name="leaveType" />
+            <PropertyRef Name="entitledLeaveAmount" />
+          </Key>
+          <Property Name="employeeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="currentYear" Type="DateTime" Precision="3" />
+          <Property Name="leaveType" Type="Int32" Nullable="false" />
+          <Property Name="entitledLeaveAmount" Type="Int32" Nullable="false" />
+          <Property Name="utilizedLeaveAmount" Type="Int32" />
+        </EntityType>
+        <EntityType Name="leaveEntry">
+          <Key>
+            <PropertyRef Name="empCode" />
+            <PropertyRef Name="leaveType" />
+          </Key>
+          <Property Name="empCode" Type="Int32" Nullable="false" />
+          <Property Name="leaveType" Type="Int32" Nullable="false" />
+          <Property Name="requestedDate" Type="DateTime" Precision="3" />
+          <Property Name="approvedDate" Type="DateTime" Precision="3" />
+          <Property Name="supervisorName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="currentStatus" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="empComments" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="supervisorComments" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="empDetail" Relationship="Self.FK_leaveEntry_empDetails" FromRole="leaveEntry" ToRole="empDetails" />
+        </EntityType>
+        <EntityType Name="leaveType">
+          <Key>
+            <PropertyRef Name="typeCode" />
+          </Key>
+          <Property Name="typeCode" Type="Int32" Nullable="false" />
+          <Property Name="leaveDescription" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <Association Name="FK_leaveEntry_empDetails">
+          <End Role="empDetails" Type="Self.empDetail" Multiplicity="1" />
+          <End Role="leaveEntry" Type="Self.leaveEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="empDetails">
+              <PropertyRef Name="empCode" />
+            </Principal>
+            <Dependent Role="leaveEntry">
+              <PropertyRef Name="empCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="EmployeeEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="empDetails" EntityType="Self.empDetail" />
+          <EntitySet Name="leaveAllocates" EntityType="Self.leaveAllocate" />
+          <EntitySet Name="leaveEntries" EntityType="Self.leaveEntry" />
+          <EntitySet Name="leaveTypes" EntityType="Self.leaveType" />
+          <AssociationSet Name="FK_leaveEntry_empDetails" Association="Self.FK_leaveEntry_empDetails">
+            <End Role="empDetails" EntitySet="empDetails" />
+            <End Role="leaveEntry" EntitySet="leaveEntries" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="EmployeeModelStoreContainer" CdmEntityContainer="EmployeeEntities">
+          <EntitySetMapping Name="empDetails">
+            <EntityTypeMapping TypeName="EmployeeModel.empDetail">
+              <MappingFragment StoreEntitySet="empDetails">
+                <ScalarProperty Name="empCode" ColumnName="empCode" />
+                <ScalarProperty Name="empName" ColumnName="empName" />
+                <ScalarProperty Name="supervisorName" ColumnName="supervisorName" />
+                <ScalarProperty Name="leavePackage" ColumnName="leavePackage" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="leaveAllocates">
+            <EntityTypeMapping TypeName="EmployeeModel.leaveAllocate">
+              <MappingFragment StoreEntitySet="leaveAllocate">
+                <ScalarProperty Name="employeeName" ColumnName="employeeName" />
+                <ScalarProperty Name="currentYear" ColumnName="currentYear" />
+                <ScalarProperty Name="leaveType" ColumnName="leaveType" />
+                <ScalarProperty Name="entitledLeaveAmount" ColumnName="entitledLeaveAmount" />
+                <ScalarProperty Name="utilizedLeaveAmount" ColumnName="utilizedLeaveAmount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="leaveEntries">
+            <EntityTypeMapping TypeName="EmployeeModel.leaveEntry">
+              <MappingFragment StoreEntitySet="leaveEntry">
+                <ScalarProperty Name="empCode" ColumnName="empCode" />
+                <ScalarProperty Name="leaveType" ColumnName="leaveType" />
+                <ScalarProperty Name="requestedDate" ColumnName="requestedDate" />
+                <ScalarProperty Name="approvedDate" ColumnName="approvedDate" />
+                <ScalarProperty Name="supervisorName" ColumnName="supervisorName" />
+                <ScalarProperty Name="currentStatus" ColumnName="currentStatus" />
+                <ScalarProperty Name="empComments" ColumnName="empComments" />
+                <ScalarProperty Name="supervisorComments" ColumnName="supervisorComments" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="leaveTypes">
+            <EntityTypeMapping TypeName="EmployeeModel.leaveType">
+              <MappingFragment StoreEntitySet="leaveType">
+                <ScalarProperty Name="typeCode" ColumnName="typeCode" />
+                <ScalarProperty Name="leaveDescription" ColumnName="leaveDescription" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

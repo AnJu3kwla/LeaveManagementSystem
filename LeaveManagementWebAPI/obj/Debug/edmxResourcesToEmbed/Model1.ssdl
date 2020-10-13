@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="EmployeeModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="empDetails">
+    <Key>
+      <PropertyRef Name="empCode" />
+    </Key>
+    <Property Name="empCode" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="empName" Type="nvarchar" MaxLength="100" />
+    <Property Name="supervisorName" Type="nvarchar" MaxLength="100" />
+    <Property Name="leavePackage" Type="nvarchar" MaxLength="100" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'Employee.dbo.leaveAllocate' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="leaveAllocate">
+    <Key>
+      <PropertyRef Name="leaveType" />
+      <PropertyRef Name="entitledLeaveAmount" />
+    </Key>
+    <Property Name="employeeName" Type="nvarchar" MaxLength="100" />
+    <Property Name="currentYear" Type="datetime" />
+    <Property Name="leaveType" Type="int" Nullable="false" />
+    <Property Name="entitledLeaveAmount" Type="int" Nullable="false" />
+    <Property Name="utilizedLeaveAmount" Type="int" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'Employee.dbo.leaveEntry' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="leaveEntry">
+    <Key>
+      <PropertyRef Name="empCode" />
+      <PropertyRef Name="leaveType" />
+    </Key>
+    <Property Name="empCode" Type="int" Nullable="false" />
+    <Property Name="leaveType" Type="int" Nullable="false" />
+    <Property Name="requestedDate" Type="datetime" />
+    <Property Name="approvedDate" Type="datetime" />
+    <Property Name="supervisorName" Type="nvarchar" MaxLength="100" />
+    <Property Name="currentStatus" Type="nvarchar" MaxLength="100" />
+    <Property Name="empComments" Type="nvarchar" MaxLength="100" />
+    <Property Name="supervisorComments" Type="nvarchar" MaxLength="100" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'Employee.dbo.leaveType' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="leaveType">
+    <Key>
+      <PropertyRef Name="typeCode" />
+    </Key>
+    <Property Name="typeCode" Type="int" Nullable="false" />
+    <Property Name="leaveDescription" Type="nvarchar" MaxLength="300" />
+  </EntityType>
+  <Association Name="FK_leaveEntry_empDetails">
+    <End Role="empDetails" Type="Self.empDetails" Multiplicity="1" />
+    <End Role="leaveEntry" Type="Self.leaveEntry" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="empDetails">
+        <PropertyRef Name="empCode" />
+      </Principal>
+      <Dependent Role="leaveEntry">
+        <PropertyRef Name="empCode" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="EmployeeModelStoreContainer">
+    <EntitySet Name="empDetails" EntityType="Self.empDetails" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="leaveAllocate" EntityType="Self.leaveAllocate" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [leaveAllocate].[employeeName] AS [employeeName], 
+    [leaveAllocate].[currentYear] AS [currentYear], 
+    [leaveAllocate].[leaveType] AS [leaveType], 
+    [leaveAllocate].[entitledLeaveAmount] AS [entitledLeaveAmount], 
+    [leaveAllocate].[utilizedLeaveAmount] AS [utilizedLeaveAmount]
+    FROM [dbo].[leaveAllocate] AS [leaveAllocate]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="leaveEntry" EntityType="Self.leaveEntry" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [leaveEntry].[empCode] AS [empCode], 
+    [leaveEntry].[leaveType] AS [leaveType], 
+    [leaveEntry].[requestedDate] AS [requestedDate], 
+    [leaveEntry].[approvedDate] AS [approvedDate], 
+    [leaveEntry].[supervisorName] AS [supervisorName], 
+    [leaveEntry].[currentStatus] AS [currentStatus], 
+    [leaveEntry].[empComments] AS [empComments], 
+    [leaveEntry].[supervisorComments] AS [supervisorComments]
+    FROM [dbo].[leaveEntry] AS [leaveEntry]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="leaveType" EntityType="Self.leaveType" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [leaveType].[typeCode] AS [typeCode], 
+    [leaveType].[leaveDescription] AS [leaveDescription]
+    FROM [dbo].[leaveType] AS [leaveType]</DefiningQuery>
+    </EntitySet>
+    <AssociationSet Name="FK_leaveEntry_empDetails" Association="Self.FK_leaveEntry_empDetails">
+      <End Role="empDetails" EntitySet="empDetails" />
+      <End Role="leaveEntry" EntitySet="leaveEntry" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

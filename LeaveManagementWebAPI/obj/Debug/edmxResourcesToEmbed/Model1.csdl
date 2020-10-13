@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="EmployeeModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="empDetail">
+    <Key>
+      <PropertyRef Name="empCode" />
+    </Key>
+    <Property Name="empCode" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="empName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="supervisorName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="leavePackage" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="leaveEntries" Relationship="Self.FK_leaveEntry_empDetails" FromRole="empDetails" ToRole="leaveEntry" />
+  </EntityType>
+  <EntityType Name="leaveAllocate">
+    <Key>
+      <PropertyRef Name="leaveType" />
+      <PropertyRef Name="entitledLeaveAmount" />
+    </Key>
+    <Property Name="employeeName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="currentYear" Type="DateTime" Precision="3" />
+    <Property Name="leaveType" Type="Int32" Nullable="false" />
+    <Property Name="entitledLeaveAmount" Type="Int32" Nullable="false" />
+    <Property Name="utilizedLeaveAmount" Type="Int32" />
+  </EntityType>
+  <EntityType Name="leaveEntry">
+    <Key>
+      <PropertyRef Name="empCode" />
+      <PropertyRef Name="leaveType" />
+    </Key>
+    <Property Name="empCode" Type="Int32" Nullable="false" />
+    <Property Name="leaveType" Type="Int32" Nullable="false" />
+    <Property Name="requestedDate" Type="DateTime" Precision="3" />
+    <Property Name="approvedDate" Type="DateTime" Precision="3" />
+    <Property Name="supervisorName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="currentStatus" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="empComments" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="supervisorComments" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="empDetail" Relationship="Self.FK_leaveEntry_empDetails" FromRole="leaveEntry" ToRole="empDetails" />
+  </EntityType>
+  <EntityType Name="leaveType">
+    <Key>
+      <PropertyRef Name="typeCode" />
+    </Key>
+    <Property Name="typeCode" Type="Int32" Nullable="false" />
+    <Property Name="leaveDescription" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <Association Name="FK_leaveEntry_empDetails">
+    <End Role="empDetails" Type="Self.empDetail" Multiplicity="1" />
+    <End Role="leaveEntry" Type="Self.leaveEntry" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="empDetails">
+        <PropertyRef Name="empCode" />
+      </Principal>
+      <Dependent Role="leaveEntry">
+        <PropertyRef Name="empCode" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="EmployeeEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="empDetails" EntityType="Self.empDetail" />
+    <EntitySet Name="leaveAllocates" EntityType="Self.leaveAllocate" />
+    <EntitySet Name="leaveEntries" EntityType="Self.leaveEntry" />
+    <EntitySet Name="leaveTypes" EntityType="Self.leaveType" />
+    <AssociationSet Name="FK_leaveEntry_empDetails" Association="Self.FK_leaveEntry_empDetails">
+      <End Role="empDetails" EntitySet="empDetails" />
+      <End Role="leaveEntry" EntitySet="leaveEntries" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

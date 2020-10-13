@@ -1,0 +1,65 @@
+﻿@model LeaveManagementWebAPI.empDetail
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<img src="https://image.freepik.com/free-vector/office-workers-boss-employees-workplace-3d-cartoon-characters_94753-879.jpg" class="img-fluid" alt="Responsive image" width="450" height="450" style="padding-top:20px">
+<h2>Employee Details</h2>
+
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal">
+    <h4>Enter your Details here</h4>
+    <hr/>
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        <label class = "control-label col-md-2">Employee Code</label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.empCode, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.empCode, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class = "control-label col-md-2">Employee Name</label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.empName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.empName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class = "control-label col-md-2">Supervisor Code</label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.supervisorName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.supervisorName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class = "control-label col-md-2">Leave Package</label>
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.leavePackage, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.leavePackage, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create" class="btn btn-info"/>
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Leave Details", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
